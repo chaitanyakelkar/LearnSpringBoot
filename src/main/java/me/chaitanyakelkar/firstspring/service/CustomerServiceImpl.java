@@ -3,6 +3,7 @@ package me.chaitanyakelkar.firstspring.service;
 import me.chaitanyakelkar.firstspring.model.Customer;
 import me.chaitanyakelkar.firstspring.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,8 +18,12 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     public Customer createCustomer(Customer customer) {
-        customerRepository.save(customer);
-        return customer;
+        try {
+            customerRepository.save(customer);
+            return customer;
+        } catch (DataIntegrityViolationException dIVE){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Customer Email must me unique value!");
+        }
     }
 
     @Override
